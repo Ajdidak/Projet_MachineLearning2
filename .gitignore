@@ -1,0 +1,5 @@
+# Ignorer les images téléchargées par le scraper
+scraper/images/*
+
+# Conserver le dossier images
+!scraper/images/.gitkeep
