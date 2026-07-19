@@ -1,4 +1,4 @@
-# ♻️ EcoSort-Search
+# ♻️ DEEPCYCLE
 
 Application web qui aide au tri sélectif : l'utilisateur saisit un nom de produit,
 l'app le recherche sur Jumia, puis une IA (deep learning) analyse le produit choisi
