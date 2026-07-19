@@ -1,7 +1,5 @@
 """
 EcoSort-Search — Frontend Streamlit.
-Design premium inspiré de Jumia (orange #F55203) avec transitions CSS
-avancées (morphing, fade-in, hover) pour une interface dynamique.
 Ne contient QUE l'affichage : toute la logique métier (scraping + IA)
 est déléguée à Backend.pipeline, qui fait le lien avec Scraper et Model_Dl.
 """
@@ -20,7 +18,7 @@ from Model_Dl.model_utils import CATEGORY_COLORS, CATEGORY_LABELS
 
 st.set_page_config(page_title="EcoSort-Search", page_icon="♻️", layout="wide")
 
-MAX_RESULTS = 5
+MAX_SEARCH_RESULTS = 5  # la recherche renvoie toujours 5 résultats, pas plus
 
 
 def _rerun():
@@ -29,6 +27,8 @@ def _rerun():
     else:
         st.experimental_rerun()
 
+
+# --- Design tokens : blanc dominant, bleu en accent, orange très discret ---
 
 BIN_COLORS_ORDERED = [
     ("jaune", "#F2C94C", "Jaune"),
@@ -44,6 +44,36 @@ SOURCE_LABELS = {
     "demo": "🎲 Mode démo — aucun modèle chargé pour l'instant",
 }
 
+CATEGORY_DESCRIPTIONS = {
+    "jaune": "Emballages légers : bouteilles plastique, canettes, boîtes de conserve, briques de lait, flacons, cartons.",
+    "vert": "Uniquement le verre d'emballage : bouteilles, pots de confiture, bocaux (vaisselle cassée interdite).",
+    "bleu": "Papiers graphiques propres : prospectus, journaux, magazines, cahiers, livres, enveloppes.",
+    "electronique": "Tout appareil à pile, batterie ou prise : smartphones, écouteurs, chargeurs, mixeurs, montres.",
+    "marron": "Déchets résiduels non recyclables : restes alimentaires, sachets souples, produits d'hygiène.",
+}
+
+CATEGORY_TITLES = {
+    "jaune": "Poubelle JAUNE",
+    "vert": "Poubelle VERTE",
+    "bleu": "Poubelle BLEUE",
+    "electronique": "Bac D3E — Électronique",
+    "marron": "Poubelle MARRON",
+}
+
+CATEGORY_ICONS = {
+    "jaune": "🟡",
+    "vert": "🟢",
+    "bleu": "🔵",
+    "electronique": "🎛️",
+    "marron": "🟤",
+}
+
+HOW_IT_WORKS = [
+    ("🔍", "1. Recherchez", "Tapez le nom d'un produit vendu sur Jumia."),
+    ("🛍️", "2. Choisissez", "Sélectionnez parmi les 5 résultats les plus pertinents."),
+    ("♻️", "3. Triez juste", "L'IA analyse le produit et indique la bonne poubelle."),
+]
+
 PLACEHOLDER_IMG = (
     "data:image/svg+xml;charset=UTF-8,"
     "%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E"
@@ -53,280 +83,279 @@ PLACEHOLDER_IMG = (
     "%3C/svg%3E"
 )
 
+# ============================================================================
+# TAILLES DE TEXTE — modifiez librement les valeurs ci-dessous (en rem ou px)
+# pour ajuster manuellement la taille de chaque élément de l'interface.
+# 1rem ≈ 16px par défaut. Plus le nombre est grand, plus le texte est gros.
+# ============================================================================
+FONT_SIZES = {
+    "logo_size": "2.1rem",               # "EcoSortSearch" en haut à gauche
+    "subtitle_size": "1.05rem",          # phrase juste sous la barre du haut
+    "section_title_size": "1.5rem",      # titres de section ("Résultats de recherche"...)
+    "legend_label_size": "1.12rem",      # nom court dans la vitrine des catégories
+    "legend_text_size": "1.08rem",       # description dans la vitrine des catégories
+    "product_name_size": "0.8rem",       # nom du produit affiché sur chaque carte
+    "product_price_size": "0.92rem",     # prix affiché sur chaque carte
+    "button_text_size": "0.95rem",       # texte à l'intérieur des boutons (Rechercher, Choisir...)
+    "result_title_size": "1.7rem",       # nom de la poubelle dans la fenêtre de résultat
+    "result_source_size": "0.8rem",      # badge "🧠 Prédit par le modèle..." dans la fenêtre
+    "footer_size": "0.75rem",            # ligne de crédit tout en bas de la page
+}
+# ============================================================================
+
 CUSTOM_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-html, body, [class^="css"], [class*=" css"] { font-family: 'Inter', sans-serif; }
+html, body, [class^="css"], [class*=" css"] { font-family: 'Poppins', sans-serif; }
 
-.stApp { background-color: #F7F7FB; }
+.stApp { background-color: #FFFFFF; }
 
-/* ---------- En-tête avec blob animé (effet "morphose") ---------- */
+[data-testid="stHorizontalBlock"] { align-items: center; }
 
-.eco-header {
-    position: relative;
-    text-align: center;
-    padding: 26px 0 6px 0;
+div[data-testid="stTextInput"] > div {
+    background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important;
+    border-radius: 999px !important; box-shadow: 0 1px 4px rgba(20,33,61,0.06);
+}
+div[data-testid="stTextInput"] > div {
+    color-scheme: light;
+}
+div[data-testid="stTextInput"] input {
+    background-color: transparent !important; border: none; height: 48px;
+    padding-left: 22px; font-size: __BUTTON_TEXT_SIZE__;
+    color: #14213D !important; -webkit-text-fill-color: #14213D !important;
+    caret-color: #14213D;
+}
+div[data-testid="stTextInput"] input::placeholder { color: #8B93A3 !important; opacity: 1; }
+div[data-testid="stTextInput"] input:focus { box-shadow: none; }
+
+button[kind="primary"] {
+    background-color: #F55203 !important; color: white !important;
+    border-radius: 999px !important; height: 46px !important;
+    font-weight: 700 !important; border: none !important;
+    box-shadow: 0 3px 10px rgba(245,82,3,0.4) !important;
+    margin-left: -14px;
+}
+button[kind="primary"]:hover { background-color: #D94600 !important; }
+
+.eco-topbar { display: flex; align-items: center; padding: 6px 0 4px 0; }
+.eco-logo { font-size: __LOGO_SIZE__; font-weight: 700; color: #14213D; white-space: nowrap; }
+.eco-logo-accent { color: #2563EB; }
+.eco-subtitle { color: #4B5563; font-size: __SUBTITLE_SIZE__; margin: 0 0 28px 0; font-style: italic; }
+
+.section-title {
+    color: #14213D; font-size: __SECTION_TITLE_SIZE__; font-weight: 700; margin: 34px 0 16px 0;
+    border-left: 5px solid #2563EB; padding-left: 12px;
+}
+
+.step-card {
+    background: #F8FAFC; border: 1px solid #E7ECF3; border-radius: 14px;
+    padding: 26px 18px; text-align: center; height: 180px;
+    display: flex; flex-direction: column; justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.step-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(20,33,61,0.08); }
+.step-icon { font-size: 2.1rem; margin-bottom: 10px; }
+.step-title { font-weight: 700; color: #14213D; font-size: 1.02rem; margin-bottom: 6px; }
+.step-desc { color: #5B6478; font-size: 0.86rem; line-height: 1.5; }
+
+.bin-showcase-card {
+    background: #FFFFFF; border: 1px solid #E7ECF3; border-radius: 12px;
+    padding: 20px 12px; text-align: center; height: 240px;
+    display: flex; flex-direction: column; justify-content: flex-start;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.bin-showcase-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(20,33,61,0.08); }
+.bin-showcase-bar { height: 4px; border-radius: 4px; margin: -20px -12px 14px -12px; flex-shrink: 0; }
+.bin-showcase-icon { font-size: 1.7rem; margin-bottom: 8px; flex-shrink: 0; }
+.bin-showcase-title { font-weight: 700; color: #14213D; font-size: __LEGEND_LABEL_SIZE__; margin-bottom: 6px; flex-shrink: 0; }
+.bin-showcase-desc {
+    color: #5B6478; font-size: __LEGEND_TEXT_SIZE__; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;
     overflow: hidden;
 }
-.eco-blob {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 360px; height: 360px;
-    background: linear-gradient(135deg, #F55203, #FFB37A);
-    filter: blur(75px);
-    opacity: 0.30;
-    z-index: 0;
-    animation: blobMorph 14s ease-in-out infinite;
-}
-@keyframes blobMorph {
-    0%, 100% { border-radius: 42% 58% 65% 35% / 45% 45% 55% 55%; transform: translate(-50%,-50%) rotate(0deg); }
-    33%      { border-radius: 58% 42% 35% 65% / 55% 62% 38% 45%; transform: translate(-50%,-50%) rotate(10deg); }
-    66%      { border-radius: 50% 50% 60% 40% / 40% 55% 45% 60%; transform: translate(-50%,-50%) rotate(-8deg); }
-}
-.eco-header-content { position: relative; z-index: 1; animation: fadeInUp 0.6s cubic-bezier(.4,0,.2,1) both; }
-
-.eco-eyebrow {
-    font-family: 'Poppins', sans-serif; font-size: 0.72rem; font-weight: 700;
-    letter-spacing: 0.16em; text-transform: uppercase; color: #F55203; margin-bottom: 6px;
-}
-.eco-dot {
-    display: inline-block; width: 14px; height: 14px; border-radius: 50%;
-    background: #F55203; margin-right: 8px; vertical-align: middle;
-    animation: pulseDot 2.2s ease-in-out infinite;
-}
-@keyframes pulseDot {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(245,82,3,0.45); }
-    50%      { box-shadow: 0 0 0 9px rgba(245,82,3,0); }
-}
-.eco-title { font-family: 'Poppins', sans-serif; font-size: 2.3rem; font-weight: 800; color: #17181C; }
-.eco-title-accent { color: #F55203; }
-.eco-subtitle { color: #6B6F76; font-size: 0.98rem; margin: 8px 0 20px 0; font-family: 'Inter', sans-serif; }
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ---------- Bandeau des 5 couleurs officielles ---------- */
-
-.bin-card {
-    background: #FFFFFF; border: 1px solid #ECECF2; border-radius: 14px;
-    padding: 16px 18px 12px 18px; margin-bottom: 20px;
-    box-shadow: 0 2px 12px rgba(20,20,30,0.04);
-    animation: fadeInUp 0.6s cubic-bezier(.4,0,.2,1) both; animation-delay: 0.08s;
-}
-.bin-stripe { display: flex; width: 100%; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
-.bin-stripe div { flex: 1; transition: transform 0.25s ease; }
-.bin-stripe div:hover { transform: scaleY(1.6); }
-.bin-stripe-labels {
-    display: flex; width: 100%; font-size: 0.68rem; color: #8A8E95;
-    letter-spacing: 0.05em; text-transform: uppercase; font-family: 'Poppins', sans-serif; font-weight: 600;
-}
-.bin-stripe-labels div { flex: 1; text-align: center; }
-
-/* ---------- Légende des consignes ---------- */
-
-.legend-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 9px 12px; border-radius: 10px; margin-bottom: 4px;
-    transition: background-color 0.2s ease;
-}
-.legend-row:nth-child(odd) { background: #FAFAFC; }
-.legend-row:hover { background: #FFF1E8; }
-.legend-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.08); flex-shrink: 0; }
-.legend-text { color: #232323; font-size: 0.92rem; line-height: 1.45; font-family: 'Inter', sans-serif; }
-.legend-text b { color: #101010; font-family: 'Poppins', sans-serif; }
-
-/* ---------- Section résultats ---------- */
-
-.section-eyebrow {
-    font-family: 'Poppins', sans-serif; font-size: 0.72rem; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase; color: #F55203; margin-bottom: 2px;
-}
-.section-title { font-family: 'Poppins', sans-serif; font-size: 1.28rem; font-weight: 700; color: #17181C; margin-bottom: 16px; }
 
 .product-card {
-    background: #FFFFFF; border: 1px solid #ECECF2; border-radius: 14px;
-    padding: 14px 14px 10px 14px; text-align: center;
-    height: 252px; display: flex; flex-direction: column;
-    box-shadow: 0 2px 10px rgba(20,20,30,0.05);
-    transition: transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s cubic-bezier(.4,0,.2,1);
-    animation: fadeInUp 0.5s cubic-bezier(.4,0,.2,1) both;
+    background: #FFFFFF; border: 1px solid #E7ECF3; border-radius: 10px 10px 0 0;
+    padding: 12px 12px 8px 12px; text-align: center;
+    height: 250px; display: flex; flex-direction: column;
+    box-shadow: 0 1px 3px rgba(20,33,61,0.05);
 }
-.product-card:hover { transform: translateY(-6px); box-shadow: 0 16px 28px rgba(20,20,30,0.12); }
 .product-card img {
-    width: 100%; height: 118px; object-fit: contain;
+    width: 100%; height: 120px; object-fit: contain;
     background: #FFFFFF; margin-bottom: 8px;
 }
 .product-name {
-    font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 500; color: #232323;
+    font-size: __PRODUCT_NAME_SIZE__; font-weight: 500; color: #1F2937;
     line-height: 1.3; margin-bottom: 6px;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; flex-grow: 1;
 }
-.product-price { font-family: 'Poppins', sans-serif; color: #17181C; font-weight: 700; font-size: 0.95rem; }
+.product-price { color: #2563EB; font-weight: 700; font-size: __PRODUCT_PRICE_SIZE__; }
 
-/* ---------- Boutons homogénéisés ---------- */
-
-div.stButton { margin-top: 8px; }
 div.stButton > button {
-    background: linear-gradient(135deg, #F55203, #FF7A33);
-    color: white; border: none; border-radius: 12px;
-    width: 100%; min-height: 48px;
-    font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.92rem;
-    letter-spacing: 0.01em;
-    box-shadow: 0 2px 8px rgba(245,82,3,0.25);
-    transition: all 0.25s cubic-bezier(.4,0,.2,1);
+    background-color: #2563EB; color: white; border: none;
+    border-radius: 0 0 10px 10px; width: 100%;
+    font-family: 'Poppins', sans-serif; font-weight: 600; padding: 9px 0;
+    font-size: __BUTTON_TEXT_SIZE__;
+    transition: background-color 0.15s ease;
 }
-div.stButton > button:hover {
-    transform: translateY(-2px) scale(1.015);
-    box-shadow: 0 10px 22px rgba(245,82,3,0.35);
-    background: linear-gradient(135deg, #FF6A1A, #F55203);
-    color: white;
-}
-div.stButton > button:active { transform: translateY(0) scale(0.98); }
-
-.stTextInput > div > div > input {
-    border-radius: 12px !important; min-height: 30px;
-    font-family: 'Inter', sans-serif;
-}
-
-/* ---------- Bandeau de résultat ---------- */
+div.stButton > button:hover { background-color: #1D4ED8; color: white; }
 
 .result-banner {
-    padding: 48px 20px; border-radius: 18px; text-align: center; color: white;
-    margin-top: 8px; animation: scaleIn 0.5s cubic-bezier(.4,0,.2,1) both;
-    box-shadow: 0 16px 32px rgba(0,0,0,0.14);
+    padding: 40px 28px 32px 28px; border-radius: 20px; text-align: center; color: white;
+    margin-top: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.18);
 }
-@keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.93); }
-    to   { opacity: 1; transform: scale(1); }
+.result-icon-circle {
+    width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.22);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.1rem; margin: 0 auto 16px auto;
 }
-.result-banner h1 { font-family: 'Poppins', sans-serif; font-size: 1.75rem; font-weight: 700; margin: 0 0 12px 0; color: white; }
+.result-banner h1 { font-size: __RESULT_TITLE_SIZE__; margin: 0 0 8px 0; color: white; font-weight: 700; }
+.result-description {
+    font-size: 0.92rem; color: rgba(255,255,255,0.92); max-width: 380px;
+    margin: 0 auto 16px auto; line-height: 1.5;
+}
 .result-source {
     display: inline-block; background: rgba(255,255,255,0.22);
-    padding: 5px 16px; border-radius: 20px; font-size: 0.8rem;
-    font-family: 'Inter', sans-serif; letter-spacing: 0.02em;
+    padding: 5px 16px; border-radius: 20px; font-size: __RESULT_SOURCE_SIZE__;
 }
-.confidence-track { width: 220px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 4px; margin: 18px auto 0 auto; overflow: hidden; }
-.confidence-fill { height: 100%; background: white; border-radius: 4px; animation: growBar 1.1s cubic-bezier(.4,0,.2,1) both; }
-@keyframes growBar { from { width: 0%; } }
-.confidence-caption { margin-top: 6px; font-size: 0.78rem; font-family: 'Inter', sans-serif; }
+.confidence-track { width: 220px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 4px; margin: 16px auto 0 auto; overflow: hidden; }
+.confidence-fill { height: 100%; background: white; }
+.confidence-caption { margin-top: 6px; font-size: 0.78rem; }
 
-.eco-footer { text-align: center; color: #A5A5AF; font-size: 0.75rem; margin-top: 46px; font-family: 'Inter', sans-serif; }
+.eco-footer { text-align: center; color: #9CA3AF; font-size: __FOOTER_SIZE__; margin-top: 50px; }
 </style>
 """
 
+for _key, _value in FONT_SIZES.items():
+    CUSTOM_CSS = CUSTOM_CSS.replace(f"__{_key.upper()}__", _value)
+
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
-stripe_segments = "".join(f'<div style="background:{c};"></div>' for _, c, _ in BIN_COLORS_ORDERED)
-stripe_labels = "".join(f"<div>{label}</div>" for _, _, label in BIN_COLORS_ORDERED)
+# --- Barre du haut : logo à gauche, recherche au centre --------------------
+
+col_logo, col_search, col_search_btn, col_spacer = st.columns([2, 3, 1, 1])
+with col_logo:
+    st.markdown(
+        '<div class="eco-topbar"><span class="eco-logo">♻️ EcoSort<span class="eco-logo-accent">Search</span></span></div>',
+        unsafe_allow_html=True,
+    )
+with col_search:
+    query = st.text_input(
+        "Nom du produit", placeholder="Cherchez un produit, une marque ou une catégorie",
+        label_visibility="collapsed",
+    )
+with col_search_btn:
+    search_clicked = st.button("Rechercher", type="primary")
+with col_spacer:
+    st.write("")
 
 st.markdown(
-    f"""
-    <div class="eco-header">
-        <div class="eco-blob"></div>
-        <div class="eco-header-content">
-            <div class="eco-eyebrow">Tri intelligent des déchets</div>
-            <div class="eco-title"><span class="eco-dot"></span>EcoSort<span class="eco-title-accent">Search</span></div>
-            <div class="eco-subtitle">Entrez un produit, on retrouve ses 5 meilleures fiches sur Jumia et on vous dit dans quelle poubelle il finit.</div>
-        </div>
-    </div>
-    <div class="bin-card">
-        <div class="bin-stripe">{stripe_segments}</div>
-        <div class="bin-stripe-labels">{stripe_labels}</div>
-    </div>
-    """,
+    '<div class="eco-subtitle">Cherchez. Trouvez. Triez juste.</div>',
     unsafe_allow_html=True,
 )
 
-with st.expander("ℹ️ Voir le détail des consignes de tri"):
-    descriptions = {
-        "jaune": "Emballages légers : bouteilles plastique, canettes, boîtes de conserve, briques de lait, flacons, cartons.",
-        "vert": "Uniquement le verre d'emballage : bouteilles, pots de confiture, bocaux (vaisselle cassée interdite).",
-        "bleu": "Papiers graphiques propres : prospectus, journaux, magazines, cahiers, livres, enveloppes.",
-        "electronique": "Tout appareil à pile, batterie ou prise : smartphones, écouteurs, chargeurs, mixeurs, montres.",
-        "marron": "Déchets résiduels non recyclables : restes alimentaires, sachets souples, produits d'hygiène.",
-    }
-    for key, color, label in BIN_COLORS_ORDERED:
-        st.markdown(
-            f"""<div class="legend-row"><div class="legend-dot" style="background:{color};"></div>
-            <div class="legend-text"><b>{label}</b> — {descriptions[key]}</div></div>""",
-            unsafe_allow_html=True,
-        )
+# --- État de session ---------------------------------------------------------
 
-# --- État de session --------------------------------------------------------
-
-if "results" not in st.session_state:
-    st.session_state.results = []
+if "search_results" not in st.session_state:
+    st.session_state.search_results = []
 if "selected_product" not in st.session_state:
     st.session_state.selected_product = None
 if "prediction" not in st.session_state:
     st.session_state.prediction = None
-
-# --- Étape 1 : recherche ----------------------------------------------------
-
-col_input, col_btn = st.columns([4, 1])
-with col_input:
-    query = st.text_input(
-        "Nom du produit",
-        placeholder="ex : bouteille de shampooing, smartphone Samsung, pot de confiture...",
-    )
-with col_btn:
-    st.write("")
-    search_clicked = st.button("🔍 Rechercher")
 
 if search_clicked:
     if not query.strip():
         st.warning("Merci d'indiquer un nom de produit avant de lancer la recherche.")
     else:
         with st.spinner("Recherche en cours sur Jumia..."):
-            st.session_state.results = search_products(query.strip(), max_results=MAX_RESULTS)
+            st.session_state.search_results = search_products(query.strip(), max_results=MAX_SEARCH_RESULTS)
         st.session_state.selected_product = None
         st.session_state.prediction = None
-        if not st.session_state.results:
+        if not st.session_state.search_results:
             st.info("Aucun résultat trouvé, réessayez avec un autre mot-clé.")
 
-# --- Étape 2 : résultats (5 max, une seule rangée) --------------------------
 
-if st.session_state.results:
+def render_product_card(product, key_prefix, idx):
+    img_src = product.get("image_url") or PLACEHOLDER_IMG
+    safe_name = html.escape(product.get("name", "") or "Produit sans nom")
+    safe_price = html.escape(product.get("price") or "") or "Prix non communiqué"
     st.markdown(
-        f'<div class="section-eyebrow">Résultats</div>'
-        f'<div class="section-title">Top {len(st.session_state.results)} produits les plus pertinents</div>',
+        f"""
+        <div class="product-card">
+            <img src="{img_src}" onerror="this.onerror=null;this.src='{PLACEHOLDER_IMG}';" />
+            <div class="product-name">{safe_name}</div>
+            <div class="product-price">{safe_price}</div>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
-    cols = st.columns(len(st.session_state.results))
-    for i, (col, product) in enumerate(zip(cols, st.session_state.results)):
+    if st.button("Choisir ce produit", key=f"{key_prefix}_{idx}"):
+        st.session_state.selected_product = product
+        st.session_state.prediction = None
+
+
+# --- Section recherche : toujours 5 résultats maximum ----------------------
+
+if st.session_state.search_results:
+    st.markdown('<div class="section-title">Résultats de recherche (top 5)</div>', unsafe_allow_html=True)
+    cols = st.columns(len(st.session_state.search_results))
+    for i, (col, product) in enumerate(zip(cols, st.session_state.search_results)):
         with col:
-            img_src = product.get("image_url") or PLACEHOLDER_IMG
-            safe_name = html.escape(product.get("name", "") or "Produit sans nom")
-            safe_price = html.escape(product.get("price") or "") or "Prix non communiqué"
-            st.markdown(
-                f"""
-                <div class="product-card" style="animation-delay:{i * 0.08}s;">
-                    <img src="{img_src}" onerror="this.onerror=null;this.src='{PLACEHOLDER_IMG}';" />
-                    <div class="product-name">{safe_name}</div>
-                    <div class="product-price">{safe_price}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            if st.button("Choisir ce produit", key=f"select_{i}"):
-                st.session_state.selected_product = product
-                st.session_state.prediction = None
+            render_product_card(product, "search", i)
 
-# --- Étape 3 : classification -----------------------------------------------
+    if st.button("✕ Effacer la recherche"):
+        st.session_state.search_results = []
+        st.session_state.selected_product = None
+        st.session_state.prediction = None
+        _rerun()
 
-if st.session_state.selected_product:
-    product = st.session_state.selected_product
-    st.divider()
-    st.markdown(
-        f'<div class="section-eyebrow">Analyse</div>'
-        f'<div class="section-title">{html.escape(product.get("name", ""))}</div>',
-        unsafe_allow_html=True,
-    )
+# --- Comment ça marche : 3 étapes -------------------------------------------
 
+st.markdown('<div class="section-title">Comment ça marche</div>', unsafe_allow_html=True)
+cols = st.columns(3)
+for col, (icon, title, desc) in zip(cols, HOW_IT_WORKS):
+    with col:
+        st.markdown(
+            f"""
+            <div class="step-card">
+                <div class="step-icon">{icon}</div>
+                <div class="step-title">{title}</div>
+                <div class="step-desc">{desc}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+# --- Vitrine permanente des 5 catégories officielles de tri -----------------
+
+st.markdown('<div class="section-title">Les 5 catégories de tri</div>', unsafe_allow_html=True)
+cols = st.columns(5)
+for col, (key, color, label) in zip(cols, BIN_COLORS_ORDERED):
+    with col:
+        st.markdown(
+            f"""
+            <div class="bin-showcase-card">
+                <div class="bin-showcase-bar" style="background:{color};"></div>
+                <div class="bin-showcase-icon">{CATEGORY_ICONS[key]}</div>
+                <div class="bin-showcase-title">{label}</div>
+                <div class="bin-showcase-desc">{CATEGORY_DESCRIPTIONS[key]}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+# --- Classification du produit sélectionné : fenêtre modale ---------------
+# S'affiche immédiatement à la sélection (pas en bas de page), fermable via
+# le bouton "Fermer". Repli élégant si st.dialog n'existe pas dans la
+# version de Streamlit installée (versions plus anciennes).
+
+_dialog_decorator = getattr(st, "dialog", None) or getattr(st, "experimental_dialog", None)
+
+
+def _render_result_content(product):
     if st.session_state.prediction is None:
         with st.spinner("Analyse du produit en cours..."):
             st.session_state.prediction = classify_product(product)
@@ -337,7 +366,9 @@ if st.session_state.selected_product:
     confidence = result["confidence"]
 
     color = CATEGORY_COLORS.get(category, "#CCCCCC")
-    label = CATEGORY_LABELS.get(category, "Catégorie inconnue")
+    title = CATEGORY_TITLES.get(category, "Catégorie inconnue")
+    icon = CATEGORY_ICONS.get(category, "♻️")
+    description = CATEGORY_DESCRIPTIONS.get(category, "")
     source_label = SOURCE_LABELS.get(source, "")
 
     confidence_html = ""
@@ -348,10 +379,13 @@ if st.session_state.selected_product:
         <div class="confidence-caption">Confiance du modèle : {pct}%</div>
         """
 
+    st.markdown(f"**Produit :** {html.escape(product.get('name', ''))}")
     st.markdown(
         f"""
         <div class="result-banner" style="background-color:{color};">
-            <h1>{label}</h1>
+            <div class="result-icon-circle">{icon}</div>
+            <h1>{title}</h1>
+            <div class="result-description">{description}</div>
             <span class="result-source">{source_label}</span>
             {confidence_html}
         </div>
@@ -359,10 +393,23 @@ if st.session_state.selected_product:
         unsafe_allow_html=True,
     )
 
-    if st.button("🔄 Nouvelle recherche"):
-        st.session_state.results = []
+    if st.button("Fermer", key="close_result_dialog"):
         st.session_state.selected_product = None
         st.session_state.prediction = None
         _rerun()
+
+
+if _dialog_decorator is not None:
+    @_dialog_decorator("Résultat du tri")
+    def _show_result_dialog(product):
+        _render_result_content(product)
+else:
+    def _show_result_dialog(product):
+        st.divider()
+        _render_result_content(product)
+
+
+if st.session_state.selected_product:
+    _show_result_dialog(st.session_state.selected_product)
 
 st.markdown('<div class="eco-footer">EcoSort-Search — Projet de fin de module</div>', unsafe_allow_html=True)
