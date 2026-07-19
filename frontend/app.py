@@ -1,5 +1,5 @@
 """
-EcoSort-Search — Frontend Streamlit.
+DeepCycle — Frontend Streamlit.
 Ne contient QUE l'affichage : toute la logique métier (scraping + IA)
 est déléguée à Backend.pipeline, qui fait le lien avec Scraper et Model_Dl.
 """
@@ -16,7 +16,7 @@ import streamlit as st
 from Backend.pipeline import search_products, classify_product
 from Model_Dl.model_utils import CATEGORY_COLORS, CATEGORY_LABELS
 
-st.set_page_config(page_title="EcoSort-Search", page_icon="♻️", layout="wide")
+st.set_page_config(page_title="DeepCycle", page_icon="♻️", layout="wide")
 
 MAX_SEARCH_RESULTS = 5  # la recherche renvoie toujours 5 résultats, pas plus
 
@@ -89,7 +89,7 @@ PLACEHOLDER_IMG = (
 # 1rem ≈ 16px par défaut. Plus le nombre est grand, plus le texte est gros.
 # ============================================================================
 FONT_SIZES = {
-    "logo_size": "2.1rem",               # "EcoSortSearch" en haut à gauche
+    "logo_size": "2.7rem",               # "DeepCycle" en haut à gauche
     "subtitle_size": "1.05rem",          # phrase juste sous la barre du haut
     "section_title_size": "1.5rem",      # titres de section ("Résultats de recherche"...)
     "legend_label_size": "1.12rem",      # nom court dans la vitrine des catégories
@@ -111,17 +111,19 @@ html, body, [class^="css"], [class*=" css"] { font-family: 'Poppins', sans-serif
 
 .stApp { background-color: #FFFFFF; }
 
+.block-container { padding-left: 2rem !important; padding-right: 2rem !important; max-width: 100% !important; }
+
 [data-testid="stHorizontalBlock"] { align-items: center; }
 
-div[data-testid="stTextInput"] > div {
+div[data-testid="stTextInput"] > div,
+div[data-testid="stTextInput"] div[data-baseweb="input"],
+div[data-testid="stTextInput"] div[data-baseweb="base-input"] {
     background-color: #FFFFFF !important; border: 1px solid #D1D5DB !important;
     border-radius: 999px !important; box-shadow: 0 1px 4px rgba(20,33,61,0.06);
-}
-div[data-testid="stTextInput"] > div {
     color-scheme: light;
 }
 div[data-testid="stTextInput"] input {
-    background-color: transparent !important; border: none; height: 48px;
+    background-color: #FFFFFF !important; border: none; height: 48px;
     padding-left: 22px; font-size: __BUTTON_TEXT_SIZE__;
     color: #14213D !important; -webkit-text-fill-color: #14213D !important;
     caret-color: #14213D;
@@ -138,7 +140,14 @@ button[kind="primary"] {
 }
 button[kind="primary"]:hover { background-color: #D94600 !important; }
 
-.eco-topbar { display: flex; align-items: center; padding: 6px 0 4px 0; }
+.eco-topbar { display: flex; align-items: center; height: 48px; padding: 0; margin: 0; line-height: 1; }
+.eco-logo { display: inline-flex; align-items: center; line-height: 1; }
+
+/* Masquer l'indication native Streamlit "Press Enter to apply" */
+div[data-testid="stTextInput"] div[data-testid="InputInstructions"],
+div[data-testid="stTextInput"] small {
+    display: none !important;
+}
 .eco-logo { font-size: __LOGO_SIZE__; font-weight: 700; color: #14213D; white-space: nowrap; }
 .eco-logo-accent { color: #2563EB; }
 .eco-subtitle { color: #4B5563; font-size: __SUBTITLE_SIZE__; margin: 0 0 28px 0; font-style: italic; }
@@ -239,7 +248,7 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 col_logo, col_search, col_search_btn, col_spacer = st.columns([2, 3, 1, 1])
 with col_logo:
     st.markdown(
-        '<div class="eco-topbar"><span class="eco-logo">♻️ EcoSort<span class="eco-logo-accent">Search</span></span></div>',
+        '<div class="eco-topbar"><span class="eco-logo">♻️ Deep<span class="eco-logo-accent">Cycle</span></span></div>',
         unsafe_allow_html=True,
     )
 with col_search:
@@ -412,4 +421,4 @@ else:
 if st.session_state.selected_product:
     _show_result_dialog(st.session_state.selected_product)
 
-st.markdown('<div class="eco-footer">EcoSort-Search — Projet de fin de module</div>', unsafe_allow_html=True)
+st.markdown('<div class="eco-footer">DeepCycle — Projet de fin de module</div>', unsafe_allow_html=True)
