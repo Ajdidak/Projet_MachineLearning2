@@ -1,9 +1,9 @@
 """
-EcoSort-Search — Recherche Jumia en ligne de commande.
+DeepCycle — Recherche Jumia en ligne de commande.
 Permet de tester le scraper directement dans le terminal, sans lancer
 l'application Streamlit, et affiche les 5 produits les plus pertinents.
 
-Usage (depuis la racine du projet EcoSort-Search) :
+Usage (depuis la racine du projet DeepCycle) :
     python Scraper/search_cli.py "smartphone samsung"
 
 Ou sans argument, pour un mode interactif (répète la recherche à volonté) :
@@ -17,7 +17,7 @@ ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from Scraper.scraper import search_jumia
+from scraper.scraper import search_jumia
 
 MAX_RESULTS = 5
 

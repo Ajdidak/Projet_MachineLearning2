@@ -1,5 +1,5 @@
 """
-EcoSort-Search — Configuration centrale du modèle de deep learning.
+DeepCycle — Configuration centrale du modèle de deep learning.
 Architecture inspirée du projet de référence garbage_classifier
 (ResNet18 + PyTorch Lightning).
 """

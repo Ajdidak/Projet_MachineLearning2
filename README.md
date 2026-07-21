@@ -46,12 +46,12 @@ Puis ouvrir [http://localhost:8501](http://localhost:8501).
 ## Entraîner le modèle (Jalon 1)
 
 1. Télécharger le dataset Kaggle *Garbage Classification* et le décompresser dans
-   `Model_Dl/dataset/` (ignoré par Git, voir `.gitignore`).
-2. Depuis `Model_Dl/`, lancer :
+   `Model_DL/dataset/` (ignoré par Git, voir `.gitignore`).
+2. Depuis `Model_DL/`, lancer :
    ```bash
    python train.py
    ```
-3. Le modèle est sauvegardé dans `Model_Dl/model/modele_eco_sort.h5`.
+3. Le modèle est sauvegardé dans `Model_DL/model/modele_eco_sort.h5`.
 4. Vérifier que `RAW_CLASSES_ORDER` dans `model_utils.py` correspond bien à l'ordre
    des classes affiché par `train.py` (`class_indices`).
 
@@ -61,7 +61,7 @@ Architecture inspirée du projet de référence `garbage_classifier` (ResNet18
 pré-entraîné, fine-tuné avec PyTorch Lightning).
 
 **Sur Kaggle Notebook (recommandé)** :
-1. Ouvrez `Model_Dl/entrainement_kaggle.ipynb` sur Kaggle, ajoutez le dataset
+1. Ouvrez `Model_DL/entrainement_kaggle.ipynb` sur Kaggle, ajoutez le dataset
    *Garbage Classification* via **+ Add Data**, activez le GPU (Settings →
    Accelerator → GPU T4 x2), puis exécutez les cellules dans l'ordre.
 2. Téléchargez le checkpoint final (`model_resnet18_ecosort.ckpt`) depuis
@@ -92,7 +92,7 @@ python predict.py chemin/vers/dossier/
 
 ## Si le scraper ne renvoie que des résultats de démonstration
 
-Depuis `Scraper/`, lancez :
+Depuis `scraper/`, lancez :
 ```bash
 python debug_scraper.py "smartphone"
 ```

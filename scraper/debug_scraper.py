@@ -1,5 +1,5 @@
 """
-EcoSort-Search — Script de diagnostic du scraper Jumia.
+DeepCycle — Script de diagnostic du scraper Jumia.
 
 À lancer si search_jumia() ne renvoie que des résultats de démonstration
 (voir _fallback_results dans scraper.py). Ce script interroge Jumia pour un

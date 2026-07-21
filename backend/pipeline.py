@@ -1,30 +1,6 @@
 """
-EcoSort-Search — Backend.
-Ce module est le SEUL point d'entrée que le Frontend doit appeler.
-Il isole le Frontend des détails du scraping (Scraper/) et du modèle de deep
-learning (Model_Dl/), ce qui permet à chaque sous-équipe de travailler
-indépendamment sans casser les autres parties.
+DeepCycle — Backend.
 
-BUG CORRIGÉ (v1) : le modèle ne connaît que 6 classes d'emballages
-(glass, paper, cardboard, plastic, metal, trash) — jamais l'électronique.
-La détection D3E passe donc par des mots-clés, vérifiés AVANT le modèle.
-
-BUG CORRIGÉ (v2) : la première liste de mots-clés ("smartphone",
-"téléphone"...) ratait la plupart des vraies fiches Jumia, car leurs titres
-sont composés de MARQUE + MODÈLE + fiche technique, sans jamais utiliser
-ces mots génériques. Exemple réel observé sur Jumia :
-    "Xiaomi Redmi A5 - 6.88 - 2sim - 4G - 8+32 Go - Noir - Garantie 12 Mois"
--> ne contient ni "smartphone" ni "téléphone", mais contient "Xiaomi",
-"4G" et "Go" (RAM/ROM), qui sont des signaux beaucoup plus fiables pour
-repérer un produit électronique sur Jumia que les mots génériques.
-La détection combine donc maintenant : mots génériques + marques
-d'électronique courantes sur Jumia + motifs de fiche technique
-(Go RAM/ROM, mAh, 4G/5G, Dual SIM, Android, AMOLED...).
-
-v3 : le scraper utilise maintenant rechercher_jumia() (version consolidée
-de l'équipe), qui trie déjà les résultats par pertinence et impose entre
-3 et 5 résultats. search_products() ci-dessous n'est qu'un adaptateur de
-nommage pour que le Frontend n'ait rien à changer.
 """
 
 import random
@@ -34,8 +10,8 @@ import requests
 from io import BytesIO
 from PIL import Image
 
-from Scraper.scraper import rechercher_jumia
-from Model_Dl.model_utils import predict_from_image, CATEGORY_LABELS
+from scraper.scraper import rechercher_jumia
+from model_DL.model_utils import predict_from_image, CATEGORY_LABELS
 
 # --- Détection D3E (électronique) -----------------------------------------
 

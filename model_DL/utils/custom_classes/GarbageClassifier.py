@@ -1,5 +1,5 @@
 """
-EcoSort-Search — LightningModule : ResNet18 pré-entraîné (ImageNet),
+DeepCycle — LightningModule : ResNet18 pré-entraîné (ImageNet),
 fine-tuné pour la classification des 6 classes d'emballages.
 """
 

@@ -1,5 +1,5 @@
 """
-EcoSort-Search — DataModule PyTorch Lightning pour le dataset Garbage
+DeepCycle — DataModule PyTorch Lightning pour le dataset Garbage
 Classification (glass, paper, cardboard, plastic, metal, trash).
 """
 

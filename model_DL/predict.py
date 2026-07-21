@@ -1,5 +1,5 @@
 """
-EcoSort-Search — Prédiction (image unique ou dossier complet).
+DeepCycle — Prédiction (image unique ou dossier complet).
 Architecture inspirée du projet de référence garbage_classifier.
 
 Usage (depuis Model_Dl/) :

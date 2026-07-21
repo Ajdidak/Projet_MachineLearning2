@@ -1,5 +1,5 @@
 """
-EcoSort-Search — Pont entre le modèle PyTorch Lightning (ResNet18) et le
+DeepCycle — Pont entre le modèle PyTorch Lightning (ResNet18) et le
 Backend. Charge le checkpoint entraîné (Model_Dl/models/weights/*.ckpt) et
 convertit la prédiction brute (cardboard/glass/.../trash) vers les 5
 catégories officielles du projet.
@@ -56,8 +56,8 @@ def load_model():
         try:
             import torch
             from torchvision import transforms
-            from Model_Dl.utils.custom_classes.GarbageClassifier import GarbageClassifier
-            from Model_Dl.utils.custom_classes.GarbageDataModule import IMAGENET_MEAN, IMAGENET_STD
+            from model_DL.utils.custom_classes.GarbageClassifier import GarbageClassifier
+            from model_DL.utils.custom_classes.GarbageDataModule import IMAGENET_MEAN, IMAGENET_STD
 
             if not CHECKPOINT_PATH.exists():
                 raise FileNotFoundError(f"Checkpoint introuvable : {CHECKPOINT_PATH}")

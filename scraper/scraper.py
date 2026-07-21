@@ -12,6 +12,7 @@ Ce code est la version finale du scraper Jumia, intégrant plusieurs améliorati
   modèle de classification,
 - des résultats de secours si Jumia est injoignable ou bloque le scraping,
   pour ne jamais planter la démo.
+  Ps: il est renommé scraper au lieu de scraper_final pour éviter de devoir changer le nom du module dans le code de l'IA.
 """
 
 import os

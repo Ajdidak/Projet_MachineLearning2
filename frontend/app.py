@@ -13,8 +13,8 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 import streamlit as st
-from Backend.pipeline import search_products, classify_product
-from Model_Dl.model_utils import CATEGORY_COLORS, CATEGORY_LABELS
+from backend.pipeline import search_products, classify_product
+from model_DL.model_utils import CATEGORY_COLORS, CATEGORY_LABELS
 
 st.set_page_config(page_title="DeepCycle", page_icon="♻️", layout="wide")
 
@@ -83,11 +83,7 @@ PLACEHOLDER_IMG = (
     "%3C/svg%3E"
 )
 
-# ============================================================================
-# TAILLES DE TEXTE — modifiez librement les valeurs ci-dessous (en rem ou px)
-# pour ajuster manuellement la taille de chaque élément de l'interface.
-# 1rem ≈ 16px par défaut. Plus le nombre est grand, plus le texte est gros.
-# ============================================================================
+
 FONT_SIZES = {
     "logo_size": "2.7rem",               # "DeepCycle" en haut à gauche
     "subtitle_size": "1.05rem",          # phrase juste sous la barre du haut

@@ -1,5 +1,5 @@
 """
-EcoSort-Search — Callback PyTorch Lightning : enregistre et trace les
+DeepCycle — Callback PyTorch Lightning : enregistre et trace les
 courbes de loss/accuracy (train + validation) à chaque epoch.
 """
 

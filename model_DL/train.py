@@ -1,5 +1,5 @@
 """
-EcoSort-Search — Entraînement du modèle (ResNet18 + PyTorch Lightning).
+DeepCycle — Entraînement du modèle (ResNet18 + PyTorch Lightning).
 Architecture inspirée du projet de référence garbage_classifier.
 
 Usage (depuis Model_Dl/, avec le dataset Kaggle décompressé dans dataset/,
