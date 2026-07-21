@@ -7,13 +7,13 @@ pour indiquer la bonne poubelle.
 ## Structure du projet
 
 ```
-Backend/      # Orchestration : fait le lien entre Scraper et Model_Dl pour le Frontend
-Docker/       # docker-compose.yml pour lancer l'app facilement
-Frontend/     # Interface Streamlit (app.py)
-Model_Dl/     # ResNet18 + PyTorch Lightning : utils/ (config, DataModule, LightningModule,
+backend/      # Orchestration : fait le lien entre Scraper et model_DL pour le Frontend
+docker/       # docker-compose.yml pour lancer l'app facilement
+frontend/     # Interface Streamlit (app.py)
+model_Dl/     # ResNet18 + PyTorch Lightning : utils/ (config, DataModule, LightningModule,
               # callback), train.py, predict.py, model_utils.py (pont vers le Backend),
               # entrainement_kaggle.ipynb, models/weights/ (checkpoint .ckpt)
-Scraper/      # Scraping Jumia (scraper.py, debug_scraper.py)
+scraper/      # Scraping Jumia (scraper.py, debug_scraper.py)
 Dockerfile    # Image Docker principale
 Requirements.txt
 ```
