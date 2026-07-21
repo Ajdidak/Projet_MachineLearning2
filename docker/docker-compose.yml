@@ -1,0 +1,10 @@
+﻿version: "3.9"
+services:
+  ecosort:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ../model_DL/models/weights:/app/model_DL/models/weights

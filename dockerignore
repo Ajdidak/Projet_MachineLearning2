@@ -1,0 +1,19 @@
+# Environnements virtuels (recréés proprement dans l'image via Requirements.txt)
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Dataset (trop volumineux, inutile dans l'image — seul le modèle entraîné compte)
+Model_Dl/dataset/
+dataset/
+
+# Git
+.git/
+.gitignore
+
+# Divers
+.DS_Store
+.ipynb_checkpoints/
+*.ipynb
+Scraper/images/

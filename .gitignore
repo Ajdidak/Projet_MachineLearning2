@@ -1,0 +1,25 @@
+# Environnements virtuels
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Dataset Kaggle (trop volumineux pour Git)
+Model_DL/dataset/
+dataset/
+data/
+
+# Modèle entraîné (trop volumineux pour Git )
+Model_DL/models/weights/*.ckpt
+*.ckpt
+Model_DL/model/*.h5
+*.h5
+
+# Images téléchargées par le scraper (Scraper/telecharger_image)
+images/
+Scraper/images/
+
+# Divers
+.env
+.DS_Store
+.ipynb_checkpoints/
