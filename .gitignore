@@ -9,10 +9,10 @@ Model_Dl/dataset/
 dataset/
 data/
 
-# Modèle entraîné (trop volumineux pour Git — à partager via Drive/Git LFS)
-Model_Dl/models/weights/*.ckpt
+# Modèle entraîné (trop volumineux pour Git )
+Model_DL/models/weights/*.ckpt
 *.ckpt
-Model_Dl/model/*.h5
+Model_DL/model/*.h5
 *.h5
 
 # Images téléchargées par le scraper (Scraper/telecharger_image)
