@@ -1,12 +1,11 @@
 version: "3.9"
-
 services:
-  deepcycle:
+  ecosort:
     build:
       context: ..
       dockerfile: Dockerfile
     ports:
       - "8501:8501"
     volumes:
-      # Permet de mettre à jour le modèle entraîné (.ckpt) sans reconstruire l'image
-      - ../Model_DL/models/weights:/app/Model_DL/models/weights
+      # Permet de mettre à jour le modèle entraîné sans reconstruire l'image
+      - ../model_DL/models/weights:/app/model_DL/models/weights
