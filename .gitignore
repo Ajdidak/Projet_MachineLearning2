@@ -5,7 +5,7 @@ __pycache__/
 *.pyc
 
 # Dataset Kaggle (trop volumineux pour Git)
-Model_Dl/dataset/
+Model_DL/dataset/
 dataset/
 data/
 
