@@ -15,8 +15,8 @@ RUN pip install --no-cache-dir --upgrade pip "setuptools<81" wheel
 RUN pip install --no-cache-dir torch==2.3.1 torchvision==0.18.1 \
     --index-url https://download.pytorch.org/whl/cpu
 
-COPY Requirements.txt .
-RUN pip install --no-cache-dir -r Requirements.txt
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY . .
 
