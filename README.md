@@ -1,118 +1,163 @@
 # ♻️ DEEPCYCLE
 
-Application web qui aide au tri sélectif : l'utilisateur saisit un nom de produit,
-l'app le recherche sur Jumia, puis une IA (deep learning) analyse le produit choisi
-pour indiquer la bonne poubelle.
+**DEEPCYCLE** est une application web intelligente d'aide au **tri sélectif**.
 
-## Structure du projet
+L'utilisateur recherche un produit sur **Jumia CI**, sélectionne un produit, puis une IA basée sur **ResNet18** analyse son image afin de déterminer la catégorie de déchet et la poubelle adaptée.
 
+##  Fonctionnement
+
+```text
+Recherche produit
+       ↓
+Scraping Jumia CI
+       ↓
+Sélection du produit
+       ↓
+Analyse de l'image
+       ↓
+Modèle IA / Mots-clés
+       ↓
+Catégorie de déchet
+       ↓
+Poubelle recommandée ♻️
 ```
-backend/      # Orchestration : fait le lien entre scraper et model_DL pour le frontend
-docker/       # docker-compose.yml pour lancer l'app facilement
-frontend/     # Interface Streamlit (app.py)
-model_DL/     # ResNet18 + PyTorch Lightning : utils/ (config, DataModule, LightningModule,
-              # callback), train.py, predict.py, model_utils.py (pont vers le backend),
-              # entrainement_kaggle.ipynb, models/weights/ (checkpoint .ckpt)
-scraper/      # Scraping Jumia (scraper.py, debug_scraper.py)
-Dockerfile    # Image Docker principale
-requirements.txt
+
+## 📁 Structure du projet
+
+```text
+DEEPCYCLE/
+├── backend/          # Orchestration de l'application
+├── docker/           # Docker Compose
+├── frontend/         # Interface Streamlit
+├── model_DL/         # Modèle ResNet18 + entraînement
+├── scraper/          # Scraping Jumia CI
+├── Dockerfile
+├── requirements.txt
+└── README.md
 ```
 
-## Lancer en local (sans Docker)
+## Installation locale
 
 ```bash
 pip install -r requirements.txt
 streamlit run frontend/app.py
 ```
 
-## Lancer avec Docker
+L'application est accessible sur :
 
-Depuis la racine du projet :
-
-```bash
-docker build -t ecosort .
-docker run -p 8501:8501 ecosort
+```text
+http://localhost:8501
 ```
 
-Ou avec docker-compose, depuis le dossier `docker/` :
+## 🐳 Avec Docker
+
+```bash
+docker build -t deepcycle .
+docker run -p 8501:8501 deepcycle
+```
+
+Ou avec Docker Compose :
 
 ```bash
 cd docker
 docker-compose up -d --build
 ```
 
-Puis ouvrir [http://localhost:8501](http://localhost:8501).
+## Modèle Deep Learning
 
-## Récupérer le modèle pré-entraîné (sans réentraîner)
+Le projet utilise **ResNet18** avec **PyTorch Lightning** pour classifier les déchets en 6 catégories :
 
-Le fichier de poids (`.ckpt`) n'est pas versionné sur Git (trop volumineux).
-Pour lancer l'application avec le vrai modèle sans avoir à réentraîner :
+```text
+cardboard
+glass
+metal
+paper
+plastic
+trash
+```
 
-1. Téléchargez le checkpoint ici :
-   👉 [model_resnet18_ecosort.ckpt](https://drive.google.com/file/d/1J8UgX2J7HTj5KjpRg7tkJj6h0zQX2B3o/view?usp=sharing)
+Le modèle entraîné doit être placé ici :
 
-2. Placez le fichier téléchargé exactement ici, sans renommer :
-   ```
-   model_DL/models/weights/model_resnet18_ecosort.ckpt
-   ```
+```text
+model_DL/models/weights/model_resnet18_ecosort.ckpt
+```
 
-3. Lancez l'application normalement (`docker-compose up --build` depuis `docker/`).
+📥 **Checkpoint pré-entraîné :** [Télécharger le modèle](https://drive.google.com/file/d/1J8UgX2J7HTj5KjpRg7tkJj6h0zQX2B3o/view?usp=sharing)
 
-⚠️ Sans ce fichier, l'application fonctionne quand même mais bascule en
-**mode démo** (catégorie aléatoire, badge 🎲 visible sur les résultats).
+> ⚠️ Si le checkpoint est absent, l'application fonctionne en **mode démo** avec une catégorie aléatoire.
 
-## Entraîner le modèle soi-même (PyTorch Lightning + ResNet18)
+## 🏋️ Entraîner le modèle
 
-Architecture inspirée du projet de référence `garbage_classifier` (ResNet18
-pré-entraîné, fine-tuné avec PyTorch Lightning).
+### Kaggle
 
-**Sur Kaggle Notebook (recommandé)** :
-1. Ouvrez `model_DL/entrainement_kaggle.ipynb` sur Kaggle, ajoutez le dataset
-   *Garbage Classification* via **+ Add Data**, activez le GPU (Settings →
-   Accelerator → GPU T4 x2), puis exécutez les cellules dans l'ordre.
-2. Téléchargez le checkpoint final (`model_resnet18_ecosort.ckpt`) depuis
-   l'onglet *Output*.
+Ouvrir :
 
-**En local (si vous avez un GPU ou pour un test rapide sur CPU)** :
+```text
+model_DL/entrainement_kaggle.ipynb
+```
+
+Ajouter le dataset **Garbage Classification**, activer le GPU, puis lancer l'entraînement.
+
+### Local
+
 ```bash
 cd model_DL
 python train.py
 ```
-Le dataset doit être dans `model_DL/dataset/` (ignoré par Git, voir `.gitignore`),
-avec un sous-dossier par classe :
-`cardboard/`, `glass/`, `metal/`, `paper/`, `plastic/`, `trash/`.
 
-**Dans tous les cas**, placez le checkpoint obtenu dans :
-```
-model_DL/models/weights/model_resnet18_ecosort.ckpt
-```
-et vérifiez que l'ordre des classes affiché pendant l'entraînement correspond
-bien à `CLASSES` dans `model_DL/utils/config.py` et à `RAW_CLASSES_ORDER`
-dans `model_DL/model_utils.py`.
+Le dataset doit être organisé ainsi :
 
-**Prédiction en ligne de commande** (pour tester le modèle isolément) :
+```text
+dataset/
+├── cardboard/
+├── glass/
+├── metal/
+├── paper/
+├── plastic/
+└── trash/
+```
+
+## 🔍 Tester le modèle
+
+Sur une image :
+
 ```bash
 cd model_DL
 python predict.py chemin/vers/image.jpg
+```
+
+Sur un dossier :
+
+```bash
 python predict.py chemin/vers/dossier/
 ```
 
-## Si le scraper ne renvoie que des résultats de démonstration
+## 🕷️ Diagnostic du scraper
 
-Depuis `scraper/`, lancez :
+Si le scraper ne fonctionne plus :
+
 ```bash
+cd scraper
 python debug_scraper.py "smartphone"
 ```
-Ce script affiche le statut HTTP, sauvegarde le HTML brut dans `debug_output.html`
-et indique combien de produits ont été détectés — pratique pour vérifier
-rapidement si Jumia a changé sa structure ou si l'URL de recherche doit être
-ajustée.
 
-## Transparence de la classification
+Le script permet de vérifier la réponse de Jumia et la détection des produits.
 
-Chaque résultat affiche sa source : `🧠 modèle IA` (image analysée par le CNN),
-`🔤 mots-clés` (notamment pour le Bac D3E, absent du dataset Kaggle — voir
-`backend/pipeline.py`), ou `🎲 mode démo` (aucun modèle chargé, catégorie
-aléatoire). Une fois `model_DL/models/weights/model_resnet18_ecosort.ckpt` en
-place, le mode démo disparaît au profit du modèle réel.
+## 🔎 Transparence de la classification
 
+Chaque résultat indique sa source :
+
+* 🧠 **Modèle IA** : classification par ResNet18.
+* 🔤 **Mots-clés** : utilisé notamment pour certains produits électroniques (Bac D3E).
+* 🎲 **Mode démo** : utilisé lorsque le modèle `.ckpt` est absent.
+
+## 🛠️ Technologies
+
+* **Python**
+* **Streamlit**
+* **PyTorch**
+* **PyTorch Lightning**
+* **ResNet18**
+* **BeautifulSoup / Requests**
+* **Docker**
+* **Kaggle**
