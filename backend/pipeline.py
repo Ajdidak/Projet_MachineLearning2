@@ -154,3 +154,34 @@ def classify_product(product: dict) -> dict:
         "source": "demo",
         "confidence": None,
     }
+
+
+def classify_uploaded_image(image) -> dict:
+    """
+    Classifie une photo fournie directement par l'utilisateur (appareil photo
+    ou fichier), sans passer par Jumia. Retourne le même dictionnaire que
+    classify_product().
+
+    Différence importante avec classify_product() : il n'y a ici aucun nom de
+    produit, donc aucun repli possible par mots-clés. Le Bac D3E est de fait
+    inatteignable par cette voie — le modèle ne connaît pas cette classe,
+    absente du dataset Kaggle. Une photo de smartphone sera donc classée dans
+    la catégorie d'emballage la plus proche visuellement, ce que l'interface
+    signale à l'utilisateur.
+    """
+    category, confidence = predict_from_image(image)
+
+    if category is not None:
+        return {"category": category, "source": "ia", "confidence": confidence}
+
+    # Aucun modèle chargé : même comportement que pour un produit Jumia, on
+    # annonce clairement le mode démo plutôt que de faire croire à une analyse.
+    # « electronique » est exclu du tirage : le modèle réel ne peut jamais
+    # produire cette classe par cette voie, le mode démo ne doit donc pas la
+    # proposer non plus, sous peine de contredire l'avertissement affiché.
+    categories_possibles = [c for c in CATEGORY_LABELS if c != "electronique"]
+    return {
+        "category": random.choice(categories_possibles),
+        "source": "demo",
+        "confidence": None,
+    }
